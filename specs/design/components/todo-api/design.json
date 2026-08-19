@@ -7,21 +7,50 @@
   "appPath": "todo-api",
   "entrypoint": "deployment/service",
   "exposure": "intranet",
+  "description": "The backend REST API for personal task management: create, list, update (text and completed state), and delete tasks, each scoped strictly to the signed-in caller. Sits behind the gateway, which injects the caller identity from the validated Thunder token; the API never trusts a client-supplied user id. Does not send notifications or reminders, and does not support sharing tasks between users.",
   "dependencies": [
     {
       "kind": "platform-resource",
       "name": "todo-db",
+      "description": "Stores each user's tasks (text, completed state, timestamps), scoped by owning user id.",
       "resourceType": "postgres-cnpg",
-      "description": "Stores each user's tasks (text, completed state, timestamps), scoped by owning user id."
+      "wiring": {
+        "ref": "todo-webapp-1-todo-db",
+        "envBindings": {
+          "dbname": "TODO_DB_DBNAME",
+          "host": "TODO_DB_HOST",
+          "password": "TODO_DB_PASSWORD",
+          "port": "TODO_DB_PORT",
+          "user": "TODO_DB_USER"
+        }
+      }
     },
     {
       "kind": "platform-resource",
       "name": "todo-auth",
+      "description": "Validates the caller's Thunder-issued token and resolves the signed-in user id used to scope every task operation.",
       "resourceType": "thunder-app",
-      "parameters": { "scopes": "openid profile email" },
-      "description": "Validates the caller's Thunder-issued token and resolves the signed-in user id used to scope every task operation."
+      "parameters": {
+        "scopes": "openid profile email"
+      },
+      "wiring": {
+        "ref": "todo-webapp-1-todo-auth",
+        "envBindings": {
+          "client_id": "TODO_AUTH_CLIENT_ID",
+          "issuer": "TODO_AUTH_ISSUER",
+          "jwks_url": "TODO_AUTH_JWKS_URL",
+          "scopes": "TODO_AUTH_SCOPES"
+        }
+      }
     }
   ],
-  "description": "The backend REST API for personal task management: create, list, update (text and completed state), and delete tasks, each scoped strictly to the signed-in caller. Sits behind the gateway, which injects the caller identity from the validated Thunder token; the API never trusts a client-supplied user id. Does not send notifications or reminders, and does not support sharing tasks between users.",
-  "skillsPinned": ["openapi-conventions", "ballerina", "api-management", "thunder-authentication"]
+  "exposesAPI": {
+    "auth": "end-user-required"
+  },
+  "skillsPinned": [
+    "openapi-conventions",
+    "ballerina",
+    "api-management",
+    "thunder-authentication"
+  ]
 }
