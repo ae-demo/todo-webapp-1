@@ -1,0 +1,26 @@
+{
+  "name": "todo-webapp",
+  "type": "web-application",
+  "version": "0.1.0",
+  "language": "TypeScript",
+  "buildpack": "docker",
+  "appPath": "todo-webapp",
+  "entrypoint": "deployment/web-application",
+  "exposure": "internet",
+  "dependencies": [
+    {
+      "kind": "component",
+      "name": "todo-api",
+      "description": "Backend API this webapp calls for all task CRUD operations (add, list, edit, complete/reopen, delete)."
+    },
+    {
+      "kind": "platform-resource",
+      "name": "todo-auth",
+      "resourceType": "thunder-app",
+      "parameters": { "scopes": "openid profile email" },
+      "description": "Thunder-issued OIDC client used for user sign-in via SSO."
+    }
+  ],
+  "description": "The single-page React app users sign in to and use to manage their personal todo list: add, view, edit, complete/reopen, and delete tasks, with completed tasks shown separately from active ones. Holds no task data itself — every read/write goes through todo-api. Does not implement its own auth; delegates sign-in to Thunder via OIDC + PKCE.",
+  "skillsPinned": ["wireframes", "react-webapp", "thunder-authentication"]
+}

@@ -1,0 +1,16 @@
+title todo-webapp-1
+
+phase 1
+
+component todo-webapp as "Todo Webapp" web-application [stories: 1, 2, 3, 4, 5, 6, 7, 8]
+component todo-api as "Todo API" service [stories: 1, 2, 3, 4, 5, 6, 7, 8]
+component todo-db as "Todo Database" database [stories: 2, 3, 4, 5, 6, 7, 8]
+
+east todo-auth as "Thunder Auth" identity-server
+
+north -> todo-webapp
+
+todo-webapp -> todo-api
+todo-webapp -> todo-auth
+todo-api -> todo-auth
+todo-api -> todo-db

@@ -1,0 +1,27 @@
+{
+  "name": "todo-api",
+  "type": "service",
+  "version": "0.1.0",
+  "language": "Ballerina",
+  "buildpack": "docker",
+  "appPath": "todo-api",
+  "entrypoint": "deployment/service",
+  "exposure": "intranet",
+  "dependencies": [
+    {
+      "kind": "platform-resource",
+      "name": "todo-db",
+      "resourceType": "postgres-cnpg",
+      "description": "Stores each user's tasks (text, completed state, timestamps), scoped by owning user id."
+    },
+    {
+      "kind": "platform-resource",
+      "name": "todo-auth",
+      "resourceType": "thunder-app",
+      "parameters": { "scopes": "openid profile email" },
+      "description": "Validates the caller's Thunder-issued token and resolves the signed-in user id used to scope every task operation."
+    }
+  ],
+  "description": "The backend REST API for personal task management: create, list, update (text and completed state), and delete tasks, each scoped strictly to the signed-in caller. Sits behind the gateway, which injects the caller identity from the validated Thunder token; the API never trusts a client-supplied user id. Does not send notifications or reminders, and does not support sharing tasks between users.",
+  "skillsPinned": ["openapi-conventions", "ballerina", "api-management", "thunder-authentication"]
+}
